@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 13:49:30 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:51:35 by elopez           ###   ########.fr       */
+/*   Updated: 2017/08/25 20:09:39 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,5 +97,6 @@ int			pf_ulong_long(t_flags *flag, va_list *ap, char c)
 		print_width(&s, flag, len - ft_strlen(s));
 	else
 		ft_putstr(s);
+	ft_strdel(&s);
 	return (len);
 }

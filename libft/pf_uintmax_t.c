@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 13:42:05 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:48:29 by elopez           ###   ########.fr       */
+/*   Updated: 2017/08/25 20:09:11 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,5 +103,6 @@ int				pf_uintmax_t(t_flags *flag, va_list *ap, char c)
 		print_width(&s, flag, len - ft_strlen(s));
 	else
 		ft_putstr(s);
+	ft_strdel(&s);
 	return (len);
 }

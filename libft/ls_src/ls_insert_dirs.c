@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/04 13:24:12 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/04 13:53:24 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/08/25 21:53:15 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,11 @@ static void	reverse_lst(t_dirs **lst)
 		next = current->next;
 		current->next = prev;
 		prev = current;
+		if (next == NULL)
+			break ;
 		current = next;
 	}
+	*lst = current;
 }
 
 void		ls_insert_dirs(t_dirs *new, t_dirs **dir, unsigned int rev)

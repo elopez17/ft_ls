@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 13:30:53 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:30:56 by elopez           ###   ########.fr       */
+/*   Updated: 2017/08/25 20:02:36 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,5 +104,6 @@ int			pf_long(t_flags *flag, va_list *ap)
 		print_width(&s, flag, len - ft_strlen(s));
 	else
 		ft_putstr(s);
+	ft_strdel(&s);
 	return (len);
 }

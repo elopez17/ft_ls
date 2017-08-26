@@ -6,7 +6,7 @@
 #    By: elopez <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/03/18 23:40:47 by elopez            #+#    #+#              #
-#    Updated: 2017/08/02 00:33:17 by eLopez           ###   ########.fr        #
+#    Updated: 2017/08/25 09:40:22 by eLopez           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 NO_COLOR= \x1b[0m
@@ -28,12 +28,12 @@ TURQ	= \x1b[36m
 WHT		= \x1b[37m
 
 NAME		= libft.a
-CC			= gcc
-CFLAGS		= -Wall -Wextra -Werror
+CC			= clang
+CFLAGS		= -Wall -Wextra -Werror -g
 FILES		= $(shell ls | grep -E ".+\.c")
 ODIR		:= obj
 OBJ			:= $(addprefix $(ODIR)/,$(FILES:%.c=%.o))
-
+#-fsanitize=address -fno-omit-frame-pointer
 all: $(NAME)
 
 $(NAME): $(OBJ) 
