@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/24 17:01:49 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/09/29 21:26:39 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static t_option *get_opt(int argc, char **argv)
 		ft_p_exit("malloc");
 	ft_bzero(opt, sizeof(t_option));
 	if (argc > 1 && argv[1][i] == '-')
-	{
 		while (argv[1][++i])
 		{
 			if (argv[1][i] == 'a')
@@ -35,8 +34,9 @@ static t_option *get_opt(int argc, char **argv)
 				opt->l = 1;
 			else if (argv[1][i] == 'R')
 				opt->R = 1;
+			else if (argv[1][i] == '1')
+				opt->one = 1;
 		}
-	}
 	return (opt);
 }
 
@@ -49,6 +49,7 @@ static t_dirs	*get_dir(int argc, char **argv, t_option *opt)
 
 	if (!(dir = (t_dirs*)malloc(sizeof(t_dirs))))
 		ft_p_exit("malloc");
+	dir->width = 0;
 	if (argc > 1)
 	{
 		i = (argv[1][0] != '-') ? 1 : 2;
@@ -56,8 +57,8 @@ static t_dirs	*get_dir(int argc, char **argv, t_option *opt)
 		stat(dir->path, &file);
 		if ((file.st_mode & 040000) == 0)
 		{
-			file_path = ls_sort_files(dir->path, ".", opt);
-			ls_print_data(file_path, ".", opt);
+			file_path = ls_sort_files(dir, dir->path, ".", opt);
+			ls_print_data(file_path, ".", dir->width, opt);
 			ls_free_2d(&file_path);
 		}
 	}
@@ -113,8 +114,8 @@ int				main(int argc, char **argv)
 		if (opt->R)
 			ft_printf("\n%s:\n", dir->path);
 		read_dir(dirp, &dir, opt);
-		files = ls_sort_files(dir->files, dir->path, opt);
-		ls_print_data(files, dir->path, opt);
+		files = ls_sort_files(dir, dir->files, dir->path, opt);
+		ls_print_data(files, dir->path, dir->width, opt);
 		ls_free_2d(&files);
 		closedir(dirp);
 		if (!dir->next || !opt->R)

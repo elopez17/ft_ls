@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/08 13:38:37 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/25 21:57:02 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/09/29 21:30:57 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static void	print_long(char *file, char *path)
 	ft_strdel(&date);
 }
 
-void	ls_print_data(char **files, char *path, t_option *opt)
+void	ls_print_data(char **files, char *path, int width, t_option *opt)
 {
 	int		i;
 	int		xfive;
@@ -80,11 +80,11 @@ void	ls_print_data(char **files, char *path, t_option *opt)
 			break ;
 		if (opt->l)
 			print_long(files[i], path);
-		ft_printf("%-17s", files[i]);
+		ft_printf("%-*s", (opt->one ? 0 : width + 1), files[i]);
 		(opt->r) ? --i : ++i;
-		if (opt->l || !((i - xfive) % 5))
+		if (opt->l || opt->one || !((i - xfive) % 5))
 			ft_putchar('\n');
 	}
-	if ((i - xfive) % 5 || opt->R)
+	if (((i - xfive) % 5 || opt->R) && !opt->one)
 		ft_putchar('\n');
 }

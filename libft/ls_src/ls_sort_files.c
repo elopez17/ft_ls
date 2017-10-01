@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/05 17:54:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/16 23:11:34 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/09/29 20:59:16 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,17 +67,20 @@ static void	quicksort(char **files, int start, int end, char *dir_path)
 	}
 }
 
-char		**ls_sort_files(char *files, char *dir_path, t_option *opt)
+char		**ls_sort_files(t_dirs *d, char *files, char *d_path, t_option *opt)
 {
 	char	**file_arr;
 	int		i;
 	int		end;
+	int		slen;
 
 	i = 0;
 	end = 0;
 	file_arr = ft_strsplit(files, ' ');
 	while (file_arr[end + 1])
-		++end;
+		d->width = (slen = ft_strlen(file_arr[end++])) > d->width ? slen\
+					 : d->width;
+	d->width = (slen = ft_strlen(file_arr[end])) > d->width ? slen : d->width;
 	if (opt->t == 0)
 	{
 		while (file_arr[i] != NULL && file_arr[i][0] == '.')
@@ -86,7 +89,7 @@ char		**ls_sort_files(char *files, char *dir_path, t_option *opt)
 		default_sort(file_arr, i);
 	}
 	else
-		quicksort(file_arr, 0, end, dir_path);
+		quicksort(file_arr, 0, end, d_path);
 	if (opt->r)
 		opt->r = end;
 	return (file_arr);

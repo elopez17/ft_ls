@@ -16,19 +16,19 @@ PURP	= \x1b[35m
 TURQ	= \x1b[36m
 WHT		= \x1b[37m
 
-CC		= clang
+CC		= gcc
 CFLAGS	= -Wall -Wextra -Werror -g
 INC		= libft/includes
 LIB		= libft/libft.a
-EX		= ft_ls
+NAME	= ft_ls
 #-fsanitize=address -fno-omit-frame-pointer
-all: $(LIB) $(EX)
+all: $(NAME)
+
+$(NAME): $(LIB)
+	make -C libft/ls_src/
 
 $(LIB):
 	make -C libft/
-
-$(EX):
-	make -C libft/ls_src/
 
 clean:
 	rm -f *.o
