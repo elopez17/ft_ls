@@ -6,41 +6,50 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/21 00:04:22 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/01 14:17:13 by elopez           ###   ########.fr       */
+/*   Updated: 2017/09/27 03:25:52 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	print_width(wint_t cval, t_flags *flag, int len)
+static inline int	wintlen(wint_t wi)
 {
-	int printed;
-
-	printed = 0;
-	if (flag->zero)
-		while (len--)
-			printed += write(1, "0", 1);
-	else if (flag->left_adj == 0)
-		while (len--)
-			printed += write(1, " ", 1);
-	printed += ft_putwint(cval);
-	if (flag->left_adj)
-		while (len--)
-			printed += write(1, " ", 1);
-	return (printed);
+	if (wi < (MB_CUR_MAX == 1 ? 0xff : 0x7f))
+		return (1);
+	else if (wi <= 0x7ff)
+		return (2);
+	else if (wi <= 0xffff)
+		return (3);
+	else
+		return (4);
 }
 
-int			pf_wint_t(t_flags *flag, va_list *ap)
+static void			print_width(wint_t cval, t_flags *flag, t_outp *op, int len)
 {
-	t_spec u;
+	char	*tmp;
 
-	u.c_val = va_arg(*ap, wint_t);
-	if (flag->precision)
-		return (pf_invalid_prec(ap));
-	if (flag->width > (int)ft_wcharlen(&u.c_val))
+	if (flag->zero)
+		op->wlen += write(1, (tmp = MAKES('0', len)), len);
+	else if (!flag->left_adj)
+		op->wlen += write(1, (tmp = MAKES(' ', len)), len);
+	op->wlen += ft_putwint(cval);
+	if (flag->left_adj)
+		op->wlen += write(1, (tmp = MAKES(' ', len)), len);
+	ft_strdel(&tmp);
+}
+
+void				pf_wint_t(t_flags *flag, t_outp *op, va_list *ap)
+{
+	wint_t c;
+
+	op->wlen += write(1, op->str, ft_strlen(op->str));
+	ft_strdel(&(op->str));
+	op->str = ft_strdup("");
+	c = va_arg(*ap, wint_t);
+	if (flag->width > wintlen(c))
 	{
-		return (print_width(u.c_val, flag, \
-					flag->width - ft_wcharlen(&u.c_val)));
+		print_width(c, flag, op, flag->width - wintlen(c));
+		return ;
 	}
-	return (ft_putwint(u.c_val));
+	op->wlen += ft_putwint(c);
 }

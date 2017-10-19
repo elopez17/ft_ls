@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/11 12:52:31 by eLopez            #+#    #+#             */
-/*   Updated: 2017/08/11 14:48:32 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/10 12:20:13 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,21 @@
 
 static void	file_type(int octal)
 {
-	if ((octal & S_IFREG) == S_IFREG)
+	if (octal == S_IFREG)
 		ft_putchar('-');
-	else if ((octal & S_IFDIR) == S_IFDIR)
+	else if (octal == S_IFDIR)
 		ft_putchar('d');
-	else if ((octal & S_IFLNK) == S_IFLNK)
+	else if (octal == S_IFLNK)
 		ft_putchar('l');
-	else if ((octal & S_IFIFO) == S_IFIFO)
+	else if (octal == S_IFIFO)
 		ft_putchar('p');
-	else if ((octal & S_IFCHR) == S_IFCHR)
+	else if (octal == S_IFCHR)
 		ft_putchar('c');
-	else if ((octal & S_IFBLK) == S_IFBLK)
+	else if (octal == S_IFBLK)
 		ft_putchar('b');
-	else if ((octal & S_IFSOCK) == S_IFSOCK)
-		ft_putchar('s');
-	else if ((octal & S_IFWHT) == S_IFWHT)
+	else if (octal == S_IFSOCK)
+		ft_putchar('s');	
+	else if (octal == S_IFWHT)
 		ft_putchar('w');
 }
 
@@ -50,7 +50,7 @@ static void	permissions(int octal)
 
 void		ls_print_perm(int octal)
 {
-	file_type(octal);
+	file_type(octal & S_IFMT);
 	permissions(octal & 04700);
 	if (octal & 04000)
 		(octal & 0100) ? ft_putchar('s') : ft_putchar('S');

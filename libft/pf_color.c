@@ -3,108 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   pf_color.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
+/*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/01 13:08:10 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:08:38 by elopez           ###   ########.fr       */
+/*   Created: 2017/09/27 14:24:19 by eLopez            #+#    #+#             */
+/*   Updated: 2017/09/28 13:48:34 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	pf_color4(const char **format, va_list *ap)
+static t_color	g_color[] =
 {
-	if (**format == 'p')
-	{
-		*format += 2;
-		return (write(1, "\x1b[35m", 5));
-	}
-	if (**format == 't')
-	{
-		*format += 2;
-		return (write(1, "\x1b[36m", 5));
-	}
-	if (**format == 'w')
-	{
-		*format += 2;
-		return (write(1, "\x1b[37m", 5));
-	}
-	return (pf_invalid_spec(ap));
-}
+	{'B', "\x1b[34;01m"},
+	{'G', "\x1b[32;01m"},
+	{'N', "\x1b[0m"},
+	{'P', "\x1b[35;01m"},
+	{'R', "\x1b[31;01m"},
+	{'T', "\x1b[36;01m"},
+	{'W', "\x1b[37;01m"},
+	{'Y', "\x1b[33;01m"},
+	{'b', "\x1b[34m"},
+	{'g', "\x1b[32m"},
+	{'n', "\x1b[0m"},
+	{'p', "\x1b[35m"},
+	{'r', "\x1b[31m"},
+	{'t', "\x1b[36m"},
+	{'w', "\x1b[37m"},
+	{'y', "\x1b[33m"}
+};
 
-static int	pf_color3(const char **format, va_list *ap)
+int		pf_color(const char **fmt, t_outp *op)
 {
-	if (**format == 'r')
-	{
-		*format += 2;
-		return (write(1, "\x1b[31m", 5));
-	}
-	if (**format == 'g')
-	{
-		*format += 2;
-		return (write(1, "\x1b[32m", 5));
-	}
-	if (**format == 'y')
-	{
-		*format += 2;
-		return (write(1, "\x1b[33m", 5));
-	}
-	if (**format == 'b')
-	{
-		*format += 2;
-		return (write(1, "\x1b[34m", 5));
-	}
-	return (pf_color4(format, ap));
-}
+	int		i;
+	char	c;
 
-static int	pf_color2(const char **format, va_list *ap)
-{
-	if (**format == 'B')
+	c = *(*fmt + 1);
+	i = c >= 'a' ? (c > 'p' ? 11 : 7) : (c > 'P' ? 3 : -1);
+	while (++i < 16)
 	{
-		*format += 2;
-		return (write(1, "\x1b[34;01m", 8));
+		if (*(*fmt + 1) == g_color[i].c)
+		{
+			op->str = ft_strmer(op->str, ft_strdup(g_color[i].str));
+			*fmt = (*fmt + 3);
+			return (0);
+		}
 	}
-	if (**format == 'P')
-	{
-		*format += 2;
-		return (write(1, "\x1b[35;01m", 8));
-	}
-	if (**format == 'T')
-	{
-		*format += 2;
-		return (write(1, "\x1b[36;01m", 8));
-	}
-	if (**format == 'W')
-	{
-		*format += 2;
-		return (write(1, "\x1b[37;01m", 8));
-	}
-	return (pf_color3(format, ap));
-}
-
-int			pf_color(const char **format, va_list *ap)
-{
-	if (*(++*format + 2) != '}')
-		pf_invalid_spec(ap);
-	if (**format == 'n' || **format == 'N')
-	{
-		*format += 2;
-		return (write(1, "\x1b[0m", 4));
-	}
-	if (**format == 'R')
-	{
-		*format += 2;
-		return (write(1, "\x1b[31;01m", 8));
-	}
-	if (**format == 'G')
-	{
-		*format += 2;
-		return (write(1, "\x1b[32;01m", 8));
-	}
-	if (**format == 'Y')
-	{
-		*format += 2;
-		return (write(1, "\x1b[33;01m", 8));
-	}
-	return (pf_color2(format, ap));
+	return (-1);
 }

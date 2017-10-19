@@ -1,33 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pf_at_fd.c                                         :+:      :+:    :+:   */
+/*   ft_strcsub.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/01 13:04:46 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:05:41 by elopez           ###   ########.fr       */
+/*   Created: 2017/08/01 13:02:31 by elopez            #+#    #+#             */
+/*   Updated: 2017/09/19 20:01:54 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_printf.h"
+#include "libft.h"
 
-static void	pf_invalid_fd(va_list *ap)
+char		*ft_strcsub(char const *s, int c)
 {
-	va_end(*ap);
-	ft_putendl("\n\x1b[31;01mError:\x1b[0m Invalid file descriptor");
-	exit(EXIT_FAILURE);
-}
+	int i;
 
-int			pf_at_fd(va_list *ap)
-{
-	int		fd;
-	t_spec	u;
-
-	fd = va_arg(*ap, int);
-	if (fd < 0)
-		pf_invalid_fd(ap);
-	u.sval = va_arg(*ap, char*);
-	ft_putstr_fd(u.sval, fd);
-	return (ft_strlen(u.sval));
+	i = 0;
+	while (s[i] != '\0')
+	{
+		if (s[i] != c)
+			++i;
+		else
+			break ;
+	}
+	return (ft_strsub(s, 0, i));
 }

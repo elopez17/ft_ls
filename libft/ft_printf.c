@@ -6,42 +6,51 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/20 16:40:34 by elopez            #+#    #+#             */
-/*   Updated: 2017/07/21 15:16:51 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/09/27 14:00:06 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static int	pf_analyze(va_list *ap, const char *format)
+static int	pf_analyze(va_list *ap, const char *fmt)
 {
-	int		len;
+	int		ret;
 	t_flags	flag;
+	t_outp	op;
 
-	len = 0;
-	len = ft_putcstr(format, '%');
-	while ((format = ft_strchr(format, '%')))
+	ret = 0;
+	op.str = ft_strcsub(fmt, '%');
+	op.wlen = 0;
+	while ((fmt = ft_strchr(fmt, '%')))
 	{
-		flag = pf_conv_flags(&format);
-		pf_conv_width(&format, &flag, ap);
-		pf_conv_precision(&format, &flag, ap);
-		pf_conv_length(&format, &flag);
-		len += pf_conv_specifier(&format, &flag, ap);
-		len += ft_putcstr(++format, '%');
+		flag = pf_conv_flags(&fmt);
+		pf_conv_width(&fmt, &flag, ap);
+		pf_conv_precision(&fmt, &flag, ap);
+		pf_conv_length(&fmt, &flag);
+		if ((pf_conv_spec(&fmt, &flag, &op, ap)) == -2)
+			break ;
+		if (op.wlen > 0)
+			ret += op.wlen;
+		op.str = ft_strmer(op.str, ft_strcsub(++fmt, '%'));
 	}
-	return (len);
+	ret += write(1, op.str, ft_strlen(op.str));
+	ft_strdel(&(op.str));
+	return (ret);
 }
 
-int			ft_printf(const char *format, ...)
+int			ft_printf(const char *fmt, ...)
 {
 	int		len;
-	va_list	ap;
+	va_list	*ap;
 
 	len = 0;
-	if (format)
+	ap = (va_list*)malloc(sizeof(va_list));
+	if (fmt)
 	{
-		va_start(ap, format);
-		len = pf_analyze(&ap, format);
-		va_end(ap);
+		va_start(*ap, fmt);
+		len = pf_analyze(ap, fmt);
+		va_end(*ap);
 	}
+	ft_memdel((void**)&ap);
 	return (len);
 }

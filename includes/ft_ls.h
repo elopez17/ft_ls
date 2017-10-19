@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 14:26:09 by eLopez            #+#    #+#             */
-/*   Updated: 2017/09/29 21:18:15 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/18 14:40:08 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <sys/xattr.h>
 # include <time.h>
 # include <stdio.h>
+# include <errno.h>
 # define MAX(a, b) (((a) > (b)) ? (a) : (b))
 
 typedef struct	s_option
@@ -34,6 +35,7 @@ typedef struct	s_option
 	unsigned int	l : 1;
 	unsigned int	R : 1;
 	unsigned int	one : 1;
+	unsigned int	files : 1;
 }				t_option;
 
 typedef struct	s_dirs
@@ -45,15 +47,20 @@ typedef struct	s_dirs
 }				t_dirs;
 
 void	ft_p_exit(char *s);
+void	ls_ill_opt(char c);
+void	ls_pathiter(t_option *opt, char *files, char **path);
+void	ls_path(t_option *opt, char *files, char *path);
 char	*ls_get_files(char *files, char *file, t_option *opt);
 char	*ls_get_dirs(char *path, char *dir);
 void	ls_insert_dirs(t_dirs *new, t_dirs **dir, unsigned int rev);
 char	**ls_sort_files(t_dirs *d, char *files, char *dir_path, t_option *opt);
+void	ls_sort(char **files, int start, int end);
+void	timesort(char **files, int start, int end, char *dir_path);
 void	ls_swap_files(char **s1, char **s2);
 time_t	ls_get_time(char *dir_path, char *file);
 void	ls_print_data(char **files, char *path, int width, t_option *opt);
 void	ls_print_perm(int octal);
-void	ls_free_2d(char ***arr_2d);
-void	ls_free_mem(t_dirs **head, t_option **opt);
+void	free_2d(char ***arr_2d);
+void	ls_free_lst(t_dirs **head);
 
 #endif

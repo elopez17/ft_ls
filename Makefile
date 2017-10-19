@@ -18,7 +18,7 @@ WHT		= \x1b[37m
 
 CC		= gcc
 CFLAGS	= -Wall -Wextra -Werror -g
-INC		= libft/includes
+INC		= includes
 LIB		= libft/libft.a
 NAME	= ft_ls
 #-fsanitize=address -fno-omit-frame-pointer

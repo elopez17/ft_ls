@@ -6,68 +6,67 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 13:39:32 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 14:11:39 by elopez           ###   ########.fr       */
+/*   Updated: 2017/09/27 03:25:25 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	print_prec(wchar_t *s, t_flags *flag)
+static inline int	wintlen(wint_t wi)
 {
-	int i;
-
-	i = 0;
-	while (flag->precision_num-- && s[i])
-		ft_putwint(s[i++]);
+	if (wi < (MB_CUR_MAX == 1 ? 0xff : 0x7f))
+		return (1);
+	else if (wi <= 0x7ff)
+		return (2);
+	else if (wi <= 0xffff)
+		return (3);
+	else
+		return (4);
 }
 
-static void	print_width(wchar_t *s, t_flags *flag)
+static void			print_width(t_flags *flag, wchar_t *s, int slen)
 {
-	int len;
-	int i;
-
-	i = 0;
-	if (flag->precision && (size_t)flag->precision_num < ft_wcharlen(s))
-		len = flag->width - flag->precision_num;
-	else
-		len = flag->width - ft_wcharlen(s);
-	if (flag->zero)
-		while (len--)
-			ft_putchar('0');
-	else if (flag->left_adj == 0)
-		while (len--)
-			ft_putchar(' ');
-	if (flag->precision && (size_t)flag->precision_num < ft_wcharlen(s))
-		while (flag->precision_num-- && s[i])
-			ft_putwint(s[i++]);
-	else
-		while (s[i])
-			ft_putwint(s[i++]);
-	if (flag->left_adj)
-		while (len--)
-			ft_putchar(' ');
-}
-
-int			pf_wchar_t(t_flags *flag, va_list *ap)
-{
-	t_spec	u;
+	char	*tmp;
 	int		len;
-	int		i;
 
-	i = 0;
-	u.s_val = va_arg(*ap, wchar_t*);
-	len = ft_wcharlen(u.s_val);
+	len = flag->width - slen;
+	if (flag->zero)
+			write(1, (tmp = MAKES('0', len)), len);
+	else if (!flag->left_adj)
+		write(1, (tmp = MAKES(' ', len)), len);
+	while (slen >= wintlen(*s) && *s)
+		slen -= ft_putwint(*s++);
+	if (flag->left_adj)
+		write(1, (tmp = MAKES(' ', len)), len);
+	ft_strdel(&tmp);
+}
+
+void				pf_wchar_t(t_flags *flag, t_outp *op, va_list *ap)
+{
+	wchar_t	*s;
+	int		len;
+
+	op->wlen += write(1, op->str, ft_strlen(op->str));
+	ft_strdel(&(op->str));
+	op->str = ft_strdup("");
+	if (!(s = va_arg(*ap, wchar_t*)))
+	{
+		op->wlen += write(1, "(null)", 6);
+		return ;
+	}
+	len = ft_wcharlen(s);
+	if (flag->prec && flag->prec_num < len)
+	{
+		len = flag->prec_num - (flag->prec_num % wintlen(*s));
+		flag->prec_num = len;
+	}
+	op->wlen += flag->width > len ? flag->width : len;
 	if (flag->width > len)
-	{
-		print_width(u.s_val, flag);
-		return (flag->width);
-	}
-	else if (flag->precision)
-	{
-		print_prec(u.s_val, flag);
-		return (flag->precision_num);
-	}
-	while (u.s_val[i])
-		ft_putwint(u.s_val[i++]);
-	return (len);
+		print_width(flag, s, len);
+	else if (flag->prec && flag->prec_num == len)
+		while (flag->prec_num && *s)
+			flag->prec_num -= ft_putwint(*s++);
+	else
+		while (len && *s)
+			len -= ft_putwint(*s++);
 }

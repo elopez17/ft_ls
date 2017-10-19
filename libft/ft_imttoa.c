@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/20 16:40:20 by elopez            #+#    #+#             */
-/*   Updated: 2017/07/20 16:40:22 by elopez           ###   ########.fr       */
+/*   Updated: 2017/09/07 20:10:18 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char			*ft_imttoa(intmax_t n)
 {
 	char		*str;
 	size_t		str_len;
-	intmax_t	n_cpy;
+	uintmax_t	n_cpy;
 
 	str_len = get_str_len(n);
 	n_cpy = n;

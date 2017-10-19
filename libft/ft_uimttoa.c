@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/01 13:03:58 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:04:01 by elopez           ###   ########.fr       */
+/*   Created: 2017/07/20 16:40:20 by elopez            #+#    #+#             */
+/*   Updated: 2017/09/12 20:08:16 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,12 @@ char			*ft_uimttoa(uintmax_t n)
 {
 	char		*str;
 	size_t		str_len;
-	uintmax_t	n_cpy;
 
 	str_len = get_str_len(n);
-	n_cpy = n;
 	if (!(str = ft_strnew(str_len)))
 		return (NULL);
-	str[--str_len] = n_cpy % 10 + '0';
-	while (n_cpy /= 10)
-		str[--str_len] = n_cpy % 10 + '0';
+	str[--str_len] = n % 10 + '0';
+	while (n /= 10)
+		str[--str_len] = n % 10 + '0';
 	return (str);
 }

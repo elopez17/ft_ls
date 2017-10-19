@@ -6,7 +6,7 @@
 /*   By: elopez <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 23:26:33 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/03 16:21:55 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/16 14:14:43 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,13 @@
 # include <stdlib.h>
 # include <string.h>
 # include <wchar.h>
+# include <stdint.h>
 
 size_t			ft_strlcat(char *dst, const char *src, size_t size);
 long long		ft_pow(long long x, long long y);
 int				ft_countwords(const char *str, char c);
 int				ft_word_len(char const *str, char c);
+int				ft_numlen(int nbr);
 int				ft_sum(int a, int b);
 int				ft_module(int a, int b);
 int				ft_isalpha(int c);
@@ -56,6 +58,7 @@ char			*ft_strcpy(char *dest, const char *src);
 char			*ft_strnew(size_t size);
 char			*ft_strmap(char const *s, char (*f)(char));
 char			*ft_strmapi(char const *s, char (*f)(unsigned int, char));
+char			*ft_strcsub(char const *s, int c);
 char			*ft_strsub(char const *s, unsigned int start, size_t len);
 char			*ft_strjoin(char const *s1, char const *s2);
 char			*ft_strmerge(char *s1, char *s2);

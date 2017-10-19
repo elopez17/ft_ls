@@ -10,14 +10,14 @@ all: $(NAME) $(EX)
 
 
 $(EX): $(OBJ)
-	$(CC) $(CFLAGS) -I ../includes $(OBJ) -L ../ -lft -oft_ls
+	$(CC) $(CFLAGS) -I ../../includes $(OBJ) -L ../ -lft -oft_ls
 	mv ft_ls ../../
 
 $(NAME):
 	make -C ../
 
 $(ODIR)/%.o:%.c | $(ODIR)
-	$(CC) $(CFLAGS) -I ../includes -o $@ -c $<
+	$(CC) $(CFLAGS) -I ../../includes -o $@ -c $<
 
 $(ODIR):
 	mkdir $(ODIR)

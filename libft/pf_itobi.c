@@ -3,38 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   pf_itobi.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
+/*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/01 13:16:06 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:16:28 by elopez           ###   ########.fr       */
+/*   Created: 2017/09/27 14:24:19 by eLopez            #+#    #+#             */
+/*   Updated: 2017/09/28 11:03:11 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-int	pf_itobi(t_flags *flag, va_list *ap)
+void		pf_itobi(t_flags *flag, t_outp *op, va_list *ap)
 {
-	t_spec				u;
-	unsigned long long	mask;
-	int					len;
+	uintmax_t	val;
+	uintmax_t	mask;
+	char		*s;
 
+	s = ft_strnew(0);
 	mask = 0xf000000000000000;
-	len = 0;
-	u.ullval = va_arg(*ap, unsigned long long);
-	while (!(mask & u.ullval) && mask)
+	val = va_arg(*ap, uintmax_t);
+	while (!(mask & val) && mask)
 		mask >>= 4;
 	mask &= 0x8888888888888888;
 	while (mask)
 	{
-		if (mask & u.ullval)
-			len += write(1, "1", 1);
+		if (mask & val)
+			s = ft_strmer(s, ft_strdup("1"));
 		else
-			len += write(1, "0", 1);
+			s = ft_strmer(s, ft_strdup("0"));
 		if (flag->alter && (mask & 0x1111111111111110))
-			len += write(1, "-", 1);
+			s = ft_strmer(s, ft_strdup("-"));
 		mask >>= 1;
 	}
-	if (u.ullval == 0)
-		return (write(1, "0", 1));
-	return (len);
+	if (val == 0)
+		s = ft_strmer(s, ft_strdup("0"));
+	op->str = ft_strmer(op->str, s);
 }

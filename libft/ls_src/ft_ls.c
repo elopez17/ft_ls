@@ -6,66 +6,58 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/09/29 21:26:39 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 11:58:10 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_ls.h>
 
-static t_option *get_opt(int argc, char **argv)
+static void		get_opt(t_option **opt, char ***argv)
 {
-	t_option	*opt;
-	int			i;
+	int	i;
 
-	i = 0;
-	if (!(opt = (t_option*)malloc(sizeof(t_option))))
-		ft_p_exit("malloc");
-	ft_bzero(opt, sizeof(t_option));
-	if (argc > 1 && argv[1][i] == '-')
-		while (argv[1][++i])
-		{
-			if (argv[1][i] == 'a')
-				opt->a = 1;
-			else if (argv[1][i] == 't')
-				opt->t = 1;
-			else if (argv[1][i] == 'r')
-				opt->r = 1;
-			else if (argv[1][i] == 'l')
-				opt->l = 1;
-			else if (argv[1][i] == 'R')
-				opt->R = 1;
-			else if (argv[1][i] == '1')
-				opt->one = 1;
-		}
-	return (opt);
+	while (*++*argv != 0 && ***argv == '-')
+	{
+		if (ft_strcmp(**argv, "--") == 0 && (*argv)++)
+			return ;
+		i = 0;
+		if ((**argv)[1] == '\0')
+			break ;
+		while ((**argv)[++i])
+			if ((**argv)[i] == 'a')
+				(*opt)->a = 1;
+			else if ((**argv)[i] == 't')
+				(*opt)->t = 1;
+			else if ((**argv)[i] == 'r')
+				(*opt)->r = 1;
+			else if ((**argv)[i] == 'l')
+				(*opt)->l = 1;
+			else if ((**argv)[i] == 'R')
+				(*opt)->R = 1;
+			else if ((**argv)[i] == '1')
+				(*opt)->one = 1;
+			else
+				ls_ill_opt((**argv)[i]);
+	}
 }
 
-static t_dirs	*get_dir(int argc, char **argv, t_option *opt)
+static t_dirs	*get_dir(t_option *opt, char *files, char *path)
 {
 	t_dirs		*dir;
-	int			i;
-	struct stat	file;
 	char		**file_path;
 
 	if (!(dir = (t_dirs*)malloc(sizeof(t_dirs))))
 		ft_p_exit("malloc");
 	dir->width = 0;
-	if (argc > 1)
-	{
-		i = (argv[1][0] != '-') ? 1 : 2;
-		dir->path = ft_strdup((argv[i] != NULL) ? argv[i] : ".");
-		stat(dir->path, &file);
-		if ((file.st_mode & 040000) == 0)
-		{
-			file_path = ls_sort_files(dir, dir->path, ".", opt);
-			ls_print_data(file_path, ".", dir->width, opt);
-			ls_free_2d(&file_path);
-		}
-	}
-	else
-		dir->path = ft_strdup(".");
+	dir->path = ft_strdup(path);
 	dir->files = ft_strdup("");
 	dir->next = NULL;
+	if (*files != '\0')
+	{
+		file_path = ls_sort_files(dir, files, path, opt);
+		ls_print_data(file_path, path, dir->width, opt);
+		free_2d(&file_path);
+	}
 	return (dir);
 }
 
@@ -85,7 +77,7 @@ static void		read_dir(DIR *dirp, t_dirs **dir, t_option *opt)
 ft_memcmp(entry->d_name, "..", 3) && (entry->d_name[0] != '.' || opt->a))
 		{
 			if (new->path)
-			{	
+			{
 				if (!(new->next = (t_dirs*)ft_memalloc(sizeof(t_dirs))))
 					ft_p_exit("malloc");
 				new = new->next;
@@ -98,30 +90,71 @@ ft_memcmp(entry->d_name, "..", 3) && (entry->d_name[0] != '.' || opt->a))
 	(new->path) ? ls_insert_dirs(tmp, dir, opt->r) : ft_memdel((void**)&new);
 }
 
-int				main(int argc, char **argv)
+void			ls_path(t_option *opt, char *files, char *path)
 {
 	t_dirs			*dir;
 	t_dirs			*head;
-	t_option		*opt;
 	DIR				*dirp;
-	char			**files;
+	char			**a_file;
 
-	if (!(opt = get_opt(argc, argv)) || !(dir = get_dir(argc, argv, opt)))
-		return (-1);
+	dir = get_dir(opt, files, path);
 	head = dir;
-	while ((dirp = opendir(dir->path)))
-	{
-		if (opt->R)
-			ft_printf("\n%s:\n", dir->path);
-		read_dir(dirp, &dir, opt);
-		files = ls_sort_files(dir, dir->files, dir->path, opt);
-		ls_print_data(files, dir->path, dir->width, opt);
-		ls_free_2d(&files);
-		closedir(dirp);
-		if (!dir->next || !opt->R)
-			break;
-		dir = dir->next;
-	}
-	ls_free_mem(&head, &opt);
+	if (*files == '\0')
+		while ((dirp = opendir(dir->path)) || errno != 0)
+		{
+			if (opt->R && dir->path != head->path)
+				ft_printf("\n%s:\n", dir->path);
+			if (errno == 0)
+			{
+				read_dir(dirp, &dir, opt);
+				a_file = ls_sort_files(dir, dir->files, dir->path, opt);
+				ls_print_data(a_file, dir->path, dir->width, opt);
+				free_2d(&a_file);
+				closedir(dirp);
+			}
+			else
+				ft_printf("ls: %s: %s\n", dir->path, strerror(errno));
+			errno = 0;
+			if (!dir->next || !opt->R)
+				break;
+			dir = dir->next;
+		}
+	ls_free_lst(&head);
+}
+
+int				main(int argc, char **argv)
+{
+	struct stat	attr;
+	t_option	*opt;
+	char		*files;
+	char		*dirs;
+	char		**path;
+
+	argc = 0;
+	files = ft_strnew(0);
+	dirs = ft_strnew(0);
+	if (!(opt = (t_option*)malloc(sizeof(t_option))))
+		ft_p_exit("malloc");
+	ft_bzero(opt, sizeof(t_option));
+	get_opt(&opt, &argv);
+	while (*argv++ != 0)
+		if (stat(*(argv - 1), &attr) == -1 && lstat(*(argv - 1), &attr) == -1)
+		{
+			ft_printf("ls: %s: %s\n", *(argv - 1), strerror(errno));
+			errno = 0;
+			opt->files = 1;
+		}
+		else if (attr.st_mode & S_IFDIR)
+			dirs = ft_strmer(dirs, ft_strjoin(" ", *(argv - 1)));
+		else
+		{
+			files = ft_strmer(files, ft_strjoin(" ", *(argv - 1)));
+		}
+	path = ft_strsplit(dirs, ' ');
+	ls_pathiter(opt, files, path);
+	ft_strdel(&files);// free files & dirs & path & opt.
+	ft_strdel(&dirs);// free files & dirs & path & opt.
+	free_2d(&path);
+	ft_memdel((void**)&opt);
 	return (0);
 }

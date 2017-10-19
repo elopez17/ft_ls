@@ -6,37 +6,58 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/01 13:06:26 by elopez            #+#    #+#             */
-/*   Updated: 2017/08/01 13:07:55 by elopez           ###   ########.fr       */
+/*   Updated: 2017/09/27 16:11:16 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-static void	print_width(unsigned char cval, t_flags *flag, int len)
+static void	null_input(t_flags *flag, t_outp *op, char c)
 {
-	if (flag->zero)
-		while (len--)
-			ft_putchar('0');
-	else if (flag->left_adj == 0)
-		while (len--)
-			ft_putchar(' ');
-	ft_putchar(cval);
-	if (flag->left_adj)
-		while (len--)
-			ft_putchar(' ');
+	char *tmp;
+
+	op->wlen += write(1, op->str, ft_strlen(op->str));
+	ft_strdel(&(op->str));
+	op->str = ft_strdup("");
+	if (flag->width-- > 1)
+	{
+		if (flag->zero)
+			op->wlen += write(1, (tmp = MAKES('0', flag->width)), flag->width);
+		else if (!flag->left_adj)
+			op->wlen += write(1, (tmp = MAKES(' ', flag->width)), flag->width);
+		op->wlen += write(1, &c, 1);
+		if (flag->left_adj)
+			op->wlen += write(1, (tmp = MAKES(' ', flag->width)), flag->width);
+		ft_strdel(&tmp);
+		return ;
+	}
+	op->wlen += write(1, &c, 1);
 }
 
-int			pf_char(t_flags *flag, va_list *ap)
+void		pf_char(t_flags *flag, t_outp *op, va_list *ap)
 {
-	t_spec u;
+	char	c;
 
-	u.cval = va_arg(*ap, int);
-	if (flag->precision)
-		return (pf_invalid_prec(ap));
-	if (flag->width > 1)
+	if (flag->l)
 	{
-		print_width(u.cval, flag, flag->width - 1);
-		return (flag->width);
+		pf_wint_t(flag, op, ap);
+		return ;
 	}
-	return (write(1, &(u.cval), 1));
+	if (!(c = va_arg(*ap, int)))
+	{
+		null_input(flag, op, c);
+		return ;
+	}
+	if (flag->width-- > 1)
+	{
+		if (flag->zero)
+			op->str = ft_strmer(op->str, MAKES('0', flag->width));
+		else if (!flag->left_adj)
+			op->str = ft_strmer(op->str, MAKES(' ', flag->width));
+		op->str = ft_strmer(op->str, MAKES(c, 1));
+		if (flag->left_adj)
+			op->str = ft_strmer(op->str, MAKES(' ', flag->width));
+		return ;
+	}
+	op->str = ft_strmer(op->str, MAKES(c, 1));
 }

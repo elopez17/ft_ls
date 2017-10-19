@@ -1,25 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ls_get_time.c                                      :+:      :+:    :+:   */
+/*   pf_iso8601.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/06 19:21:31 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 11:46:18 by eLopez           ###   ########.fr       */
+/*   Created: 2017/09/27 16:50:50 by eLopez            #+#    #+#             */
+/*   Updated: 2017/09/27 17:04:02 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_ls.h>
+#include "ft_printf.h"
 
-time_t	ls_get_time(char *dir_path, char *file)
+void	pf_iso8601(t_flags *flag, t_outp *op, va_list *ap)
 {
-	char		*path;
-	struct stat	attr;
+	int		date;
+	int		i;
+	char	*s;
 
-	path = ft_strjoin(dir_path, "/");
-	path = ft_strmer(path, ft_strdup(file));
-	lstat(path, &attr);
-	ft_strdel(&path);
-	return (attr.st_mtime);
+	if (flag)
+		;
+	i = 0;
+	s = ft_strnew(0);
+	while (++i <= 3)
+	{
+		date = va_arg(*ap, int);
+		if (date < 10)
+			s = ft_strmer(s, ft_strdup("0"));
+		s = ft_strmer(s, ft_itoa(date));
+		if (i <= 2)
+			s = ft_strmer(s, ft_strdup("-"));
+	}
+	op->str = ft_strmer(op->str, s);
 }

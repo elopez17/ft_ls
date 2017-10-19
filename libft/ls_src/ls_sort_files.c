@@ -6,32 +6,44 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/05 17:54:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/09/29 20:59:16 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/18 14:38:45 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_ls.h>
 
-static void	default_sort(char **files, int insert)
+static int	ls_part(char **files, int start, int end)
 {
+	int	partition_i;
 	int	i;
-	int k;
 
-	k = 0;
-	i = insert;
-	if (insert == 0)
-		return ;
-	while (files[i] && files[++i])
+	partition_i = start;
+	i = start;
+	while (i < end)
 	{
-		if (ft_strcmp(files[insert], files[i]) > 0)
+		if (ft_strcmp(files[end], files[i]) > 0)
 		{
-			ls_swap_files(&(files[insert]), &(files[i]));
-			++insert;
-			i = insert;
+			ls_swap_files(&(files[i]), &(files[partition_i]));
+			partition_i++;
 		}
+		++i;
+	}
+	ls_swap_files(&(files[partition_i]), &(files[end]));
+	return (partition_i);
+}
+
+void		ls_sort(char **files, int start, int end)
+{
+	int partition_i;
+
+	if (start < end)
+	{
+		partition_i = ls_part(files, start, end);
+		ls_sort(files, start, partition_i - 1);
+		ls_sort(files, partition_i + 1, end);
 	}
 }
-static int	partition(char **files, int start, int end, char *dir_path)
+static int	timepart(char **files, int start, int end, char *dir_path)
 {
 	time_t		pivot;
 	time_t		file_t;
@@ -44,7 +56,12 @@ static int	partition(char **files, int start, int end, char *dir_path)
 	while (i < end)
 	{
 		file_t = ls_get_time(dir_path, files[i]);
-		if (file_t >= pivot)
+		if (file_t > pivot)
+		{
+			ls_swap_files(&(files[i]), &(files[partition_i]));
+			partition_i++;
+		}
+		else if (file_t == pivot && ft_strcmp(files[end], files[i]) > 0)
 		{
 			ls_swap_files(&(files[i]), &(files[partition_i]));
 			partition_i++;
@@ -55,15 +72,15 @@ static int	partition(char **files, int start, int end, char *dir_path)
 	return (partition_i);
 }
 
-static void	quicksort(char **files, int start, int end, char *dir_path)
+void		timesort(char **files, int start, int end, char *dir_path)
 {
 	int partition_i;
 
 	if (start < end)
 	{
-		partition_i = partition(files, start, end, dir_path);
-		quicksort(files, start, partition_i - 1, dir_path);
-		quicksort(files, partition_i + 1, end, dir_path);
+		partition_i = timepart(files, start, end, dir_path);
+		timesort(files, start, partition_i - 1, dir_path);
+		timesort(files, partition_i + 1, end, dir_path);
 	}
 }
 
@@ -85,11 +102,10 @@ char		**ls_sort_files(t_dirs *d, char *files, char *d_path, t_option *opt)
 	{
 		while (file_arr[i] != NULL && file_arr[i][0] == '.')
 			++i;
-		default_sort(file_arr, (end == 0) ? 0 : 2);
-		default_sort(file_arr, i);
+		ls_sort(file_arr, (i > 2) ? 2 : i, end);
 	}
 	else
-		quicksort(file_arr, 0, end, d_path);
+		timesort(file_arr, 0, end, d_path);
 	if (opt->r)
 		opt->r = end;
 	return (file_arr);

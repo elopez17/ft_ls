@@ -6,30 +6,33 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/07/21 00:06:56 by eLopez            #+#    #+#             */
-/*   Updated: 2017/07/21 15:13:41 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/09/29 06:15:17 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_printf.h"
 
-t_flags	pf_conv_flags(const char **format)
+t_flags	pf_conv_flags(const char **fmt)
 {
 	t_flags	flag;
 
 	ft_bzero(&flag, sizeof(flag));
-	while (*++*format == ' ' || **format == '#' || **format == '-' ||\
-			**format == '+' || **format == '0')
+	if (*(*fmt + 1) > '0' && ++*fmt)
+		return (flag);
+	while (1)
 	{
-		if (**format == '#')
+		if (*++*fmt == '#')
 			flag.alter = 1;
-		else if (**format == '-')
+		else if (**fmt == '-')
 			flag.left_adj = 1;
-		else if (**format == '0')
+		else if (**fmt == '0')
 			flag.zero = 1;
-		else if (**format == '+')
+		else if (**fmt == '+')
 			flag.sign = 1;
-		else if (**format == ' ')
+		else if (**fmt == ' ')
 			flag.space = 1;
+		else
+			break ;
 	}
 	if (flag.left_adj & flag.zero)
 		flag.zero = 0;
@@ -38,73 +41,76 @@ t_flags	pf_conv_flags(const char **format)
 	return (flag);
 }
 
-void	pf_conv_width(const char **format, t_flags *flag, va_list *ap)
+void	pf_conv_width(const char **fmt, t_flags *flag, va_list *ap)
 {
-	int num;
-
-	num = 0;
-	if (ft_isdigit(**format))
-		while (ft_isdigit(**format))
+	while (ft_isdigit(**fmt) || **fmt == '*')
+	{
+		flag->width = 0;
+		while (ft_isdigit(**fmt))
 		{
-			num = num * 10 + ((**format) - '0');
-			(*format)++;
+			flag->width = flag->width * 10 + ((**fmt) - '0');
+			++(*fmt);
 		}
-	else if (**format == '*')
-	{
-		num = va_arg(*ap, int);
-		(*format)++;
-	}
-	flag->width = num;
-}
-
-void	pf_conv_precision(const char **format, t_flags *flag, va_list *ap)
-{
-	int num;
-
-	num = 0;
-	if (**format == '.')
-	{
-		if (*++*format != '-')
-			flag->precision = 1;
-		else
-			(*format)++;
-		if (ft_isdigit(**format))
-			while (ft_isdigit(**format))
+		if (**fmt == '*')
+		{
+			flag->width = va_arg(*ap, int);
+			if (flag->width < 0)
 			{
-				num = num * 10 + ((**format) - '0');
-				(*format)++;
+				flag->left_adj = 1;
+				flag->width = -flag->width;
 			}
-		else if (**format == '*')
-		{
-			num = va_arg(*ap, int);
-			(*format)++;
+			++(*fmt);
 		}
-		flag->precision_num = num;
 	}
 }
 
-void	pf_conv_length(const char **format, t_flags *flag)
+void	pf_conv_precision(const char **fmt, t_flags *flag, va_list *ap)
 {
-	if (**format == 'h')
+	if (**fmt == '.')
+	{
+		if (*++*fmt != '-')
+			flag->prec = 1;
+		else
+			++(*fmt);
+		if (**fmt == '*')
+		{
+			flag->prec_num = va_arg(*ap, int);
+			if (flag->prec_num < 0)
+				flag->prec = 0;
+			++(*fmt);
+		}
+		else
+			while (ft_isdigit(**fmt))
+			{
+				flag->prec_num = flag->prec_num * 10 + ((**fmt) - '0');
+				++(*fmt);
+			}
+	}
+}
+
+void	pf_conv_length(const char **fmt, t_flags *flag)
+{
+	if (**fmt == 'h')
 		flag->h = 1;
-	if (**format == 'l')
+	else if (**fmt == 'l')
 		flag->l = 1;
-	if (**format == 'j')
+	else if (**fmt == 'j')
 		flag->j = 1;
-	if (**format == 'z')
+	else if (**fmt == 'z')
 		flag->z = 1;
-	if (flag->h | flag->l | flag->j | flag->z)
-		(*format)++;
-	if (**format == 'h' && flag->h == 1)
+	if (flag->h || flag->l || flag->j || flag->z)
 	{
-		flag->hh = 1;
-		flag->h = 0;
+		if (*++*fmt == 'h' && flag->h)
+		{
+			flag->hh = 1;
+			flag->h = 0;
+			++(*fmt);
+		}
+		else if (**fmt == 'l' && flag->l)
+		{
+			flag->ll = 1;
+			flag->l = 0;
+			++(*fmt);
+		}
 	}
-	if (**format == 'l' && flag->l == 1)
-	{
-		flag->ll = 1;
-		flag->l = 0;
-	}
-	if (flag->hh | flag->ll)
-		(*format)++;
 }

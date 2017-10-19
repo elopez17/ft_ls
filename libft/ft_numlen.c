@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ls_get_time.c                                      :+:      :+:    :+:   */
+/*   ft_numlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/08/06 19:21:31 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 11:46:18 by eLopez           ###   ########.fr       */
+/*   Created: 2017/10/16 14:10:50 by eLopez            #+#    #+#             */
+/*   Updated: 2017/10/16 14:41:55 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <ft_ls.h>
-
-time_t	ls_get_time(char *dir_path, char *file)
+int	ft_numlen(int nbr)
 {
-	char		*path;
-	struct stat	attr;
+  int len;
 
-	path = ft_strjoin(dir_path, "/");
-	path = ft_strmer(path, ft_strdup(file));
-	lstat(path, &attr);
-	ft_strdel(&path);
-	return (attr.st_mtime);
+  if (nbr < 0)
+  {
+	len = 2;
+	nbr = -nbr;
+  }
+  else
+	len = 1;
+  while (nbr /= 10)
+	++len;
+  return (len);
 }
