@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/11 12:52:31 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/10 12:20:13 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 18:13:01 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	file_type(int octal)
 	else if (octal == S_IFBLK)
 		ft_putchar('b');
 	else if (octal == S_IFSOCK)
-		ft_putchar('s');	
+		ft_putchar('s');
 	else if (octal == S_IFWHT)
 		ft_putchar('w');
 }

@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/05 17:54:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/18 14:38:45 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 18:22:27 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void		ls_sort(char **files, int start, int end)
 		ls_sort(files, partition_i + 1, end);
 	}
 }
+
 static int	timepart(char **files, int start, int end, char *dir_path)
 {
 	time_t		pivot;
@@ -95,9 +96,10 @@ char		**ls_sort_files(t_dirs *d, char *files, char *d_path, t_option *opt)
 	end = 0;
 	file_arr = ft_strsplit(files, ' ');
 	while (file_arr[end + 1])
-		d->width = (slen = ft_strlen(file_arr[end++])) > d->width ? slen\
-					 : d->width;
-	d->width = (slen = ft_strlen(file_arr[end])) > d->width ? slen : d->width;
+		if ((slen = ft_strlen(file_arr[end++])) > d->width)
+			d->width = slen;
+	if ((slen = ft_strlen(file_arr[end])) > d->width)
+		d->width = slen;
 	if (opt->t == 0)
 	{
 		while (file_arr[i] != NULL && file_arr[i][0] == '.')

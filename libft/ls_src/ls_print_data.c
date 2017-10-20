@@ -6,14 +6,14 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/08 13:38:37 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/18 21:37:19 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 18:12:29 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <ft_ls.h>
 
-static int	width1 = 1;
-static int	width2 = 1;
+static int	g_width1 = 1;
+static int	g_width2 = 1;
 
 static void	linkref(char *f_path, char **file)
 {
@@ -41,8 +41,8 @@ static void	total_size(char **files, char *path, t_option *opt)
 		if (files[i][0] != '.' || opt->a)
 		{
 			size += buf.st_blocks;
-			width1 = MAX(width1, ft_numlen(buf.st_nlink));
-			width2 = MAX(width2, ft_numlen(buf.st_size));
+			g_width1 = MAX(g_width1, ft_numlen(buf.st_nlink));
+			g_width2 = MAX(g_width2, ft_numlen(buf.st_size));
 		}
 		ft_strdel(&f_path);
 	}
@@ -64,7 +64,7 @@ static void	print_long(char **file, char *path)
 	IF(((attr.st_mode & S_IFLNK) == S_IFLNK), linkref(f_path, file));
 	ft_strdel(&f_path);
 	ls_print_perm(attr.st_mode & 0177777);
-	ft_printf("%*d ", width1 + 2, attr.st_nlink);
+	ft_printf("%*d ", g_width1 + 2, attr.st_nlink);
 	((pwd = getpwuid(attr.st_uid)) != NULL) ? ft_printf("%s ", pwd->pw_name) :\
 			ft_printf("%d ", attr.st_uid);
 	((grp = getgrgid(attr.st_gid)) != NULL) ? ft_printf(" %s", grp->gr_name) :\
@@ -81,11 +81,11 @@ static void	print_long(char **file, char *path)
 	}
 	else
 		date = ft_strsub(ctime(&attr.st_mtime), 4, 12);
-	ft_printf("%*lld %s ", width2 + 2, attr.st_size, date);
+	ft_printf("%*lld %s ", g_width2 + 2, attr.st_size, date);
 	ft_strdel(&date);
 }
 
-void	ls_print_data(char **files, char *path, int width, t_option *opt)
+void		ls_print_data(char **files, char *path, int width, t_option *opt)
 {
 	int		i;
 	int		xfive;
@@ -108,7 +108,7 @@ void	ls_print_data(char **files, char *path, int width, t_option *opt)
 		if (opt->l || opt->one || !((i - xfive) % 5))
 			ft_putchar('\n');
 	}
-	width1 = 0;
-	width2 = 0;
+	g_width1 = 0;
+	g_width2 = 0;
 	IF(((i - xfive) % 5 || opt->R) && !opt->one && !opt->l, ft_putchar('\n'));
 }

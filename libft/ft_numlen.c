@@ -6,22 +6,22 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/16 14:10:50 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/16 14:41:55 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 17:54:45 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 int	ft_numlen(int nbr)
 {
-  int len;
+	int len;
 
-  if (nbr < 0)
-  {
-	len = 2;
-	nbr = -nbr;
-  }
-  else
-	len = 1;
-  while (nbr /= 10)
-	++len;
-  return (len);
+	if (nbr < 0)
+	{
+		len = 2;
+		nbr = -nbr;
+	}
+	else
+		len = 1;
+	while (nbr /= 10)
+		++len;
+	return (len);
 }

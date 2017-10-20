@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 11:58:10 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/19 18:06:06 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,7 +116,7 @@ void			ls_path(t_option *opt, char *files, char *path)
 				ft_printf("ls: %s: %s\n", dir->path, strerror(errno));
 			errno = 0;
 			if (!dir->next || !opt->R)
-				break;
+				break ;
 			dir = dir->next;
 		}
 	ls_free_lst(&head);
