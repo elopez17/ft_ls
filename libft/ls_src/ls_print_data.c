@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/08 13:38:37 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 18:12:29 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/20 19:44:20 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,28 @@ static void	total_size(char **files, char *path, t_option *opt)
 		ft_printf("total %lld\n", size);
 }
 
+static char	*ls_getdate(struct stat *attr)
+{
+	char	*date;
+	time_t	current;
+
+	current = time(NULL);
+	if (attr->st_mtime >= 253402329600)
+	{
+		date = ft_strmer(ft_strsub(ctime(&attr->st_mtime), 4, 7),\
+				ft_strsub(ctime(&attr->st_mtime), 23, 6));
+	}
+	else if ((attr->st_mtime - current) > 0 ||\
+			(current - attr->st_mtime) > 15768000)
+	{
+		date = ft_strmer(ft_strsub(ctime(&attr->st_mtime), 4, 7),\
+				ft_strsub(ctime(&attr->st_mtime), 19, 5));
+	}
+	else
+		date = ft_strsub(ctime(&attr->st_mtime), 4, 12);
+	return (date);
+}
+
 static void	print_long(char **file, char *path)
 {
 	struct stat		attr;
@@ -69,18 +91,7 @@ static void	print_long(char **file, char *path)
 			ft_printf("%d ", attr.st_uid);
 	((grp = getgrgid(attr.st_gid)) != NULL) ? ft_printf(" %s", grp->gr_name) :\
 			ft_printf(" %d", attr.st_gid);
-	if (attr.st_mtime >= 253402329600)
-	{
-		date = ft_strmer(ft_strsub(ctime(&attr.st_mtime), 4, 7),\
-				ft_strsub(ctime(&attr.st_mtime), 23, 6));
-	}
-	else if ((attr.st_mtime - time(NULL)) > 0 || (time(NULL) - attr.st_mtime) > 15768000)
-	{
-		date = ft_strmer(ft_strsub(ctime(&attr.st_mtime), 4, 7),\
-				ft_strsub(ctime(&attr.st_mtime), 19, 5));
-	}
-	else
-		date = ft_strsub(ctime(&attr.st_mtime), 4, 12);
+	date = ls_getdate(&attr);
 	ft_printf("%*lld %s ", g_width2 + 2, attr.st_size, date);
 	ft_strdel(&date);
 }

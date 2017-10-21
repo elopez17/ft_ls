@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 18:06:06 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/20 17:46:15 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,26 +99,23 @@ void			ls_path(t_option *opt, char *files, char *path)
 
 	dir = get_dir(opt, files, path);
 	head = dir;
-	if (*files == '\0')
-		while ((dirp = opendir(dir->path)) || errno != 0)
+	while (*files == '\0' && ((dirp = opendir(dir->path)) || errno != 0))
+	{
+		IF(opt->R && dir->path != head->path, ft_printf("\n%s:\n", dir->path));
+		if (errno == 0)
 		{
-			if (opt->R && dir->path != head->path)
-				ft_printf("\n%s:\n", dir->path);
-			if (errno == 0)
-			{
-				read_dir(dirp, &dir, opt);
-				a_file = ls_sort_files(dir, dir->files, dir->path, opt);
-				ls_print_data(a_file, dir->path, dir->width, opt);
-				free_2d(&a_file);
-				closedir(dirp);
-			}
-			else
-				ft_printf("ls: %s: %s\n", dir->path, strerror(errno));
-			errno = 0;
-			if (!dir->next || !opt->R)
-				break ;
-			dir = dir->next;
+			read_dir(dirp, &dir, opt);
+			a_file = ls_sort_files(dir, dir->files, dir->path, opt);
+			ls_print_data(a_file, dir->path, dir->width, opt);
+			free_2d(&a_file);
+			closedir(dirp);
 		}
+		else
+			ft_printf("ls: %s: %s\n", dir->path, strerror(errno));
+		errno = 0;
+		IF(!dir->next || !opt->R, break);
+		dir = dir->next;
+	}
 	ls_free_lst(&head);
 }
 
@@ -130,11 +127,9 @@ int				main(int argc, char **argv)
 	char		*dirs;
 	char		**path;
 
-	argc = 0;
 	files = ft_strnew(0);
 	dirs = ft_strnew(0);
-	if (!(opt = (t_option*)malloc(sizeof(t_option))))
-		ft_p_exit("malloc");
+	MEMCHECK(!(opt = (t_option*)malloc(sizeof(t_option))));
 	ft_bzero(opt, sizeof(t_option));
 	get_opt(&opt, &argv);
 	while (*argv++ != 0)
@@ -147,14 +142,8 @@ int				main(int argc, char **argv)
 		else if (attr.st_mode & S_IFDIR)
 			dirs = ft_strmer(dirs, ft_strjoin(" ", *(argv - 1)));
 		else
-		{
 			files = ft_strmer(files, ft_strjoin(" ", *(argv - 1)));
-		}
-	path = ft_strsplit(dirs, ' ');
-	ls_pathiter(opt, files, path);
-	ft_strdel(&files);// free files & dirs & path & opt.
-	ft_strdel(&dirs);// free files & dirs & path & opt.
-	free_2d(&path);
-	ft_memdel((void**)&opt);
-	return (0);
+	ls_pathiter(opt, files, (path = ft_strsplit(dirs, ' ')));
+	ls_free_all(&files, &dirs, &path, &opt);
+	return ((argc = 0));
 }

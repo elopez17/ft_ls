@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/02 14:26:09 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/18 14:40:08 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/20 09:50:41 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include <stdio.h>
 # include <errno.h>
 # define MAX(a, b) (((a) > (b)) ? (a) : (b))
+# define MEMCHECK(x) if (x) ft_p_exit("malloc")
 
 typedef struct	s_option
 {
@@ -62,5 +63,6 @@ void	ls_print_data(char **files, char *path, int width, t_option *opt);
 void	ls_print_perm(int octal);
 void	free_2d(char ***arr_2d);
 void	ls_free_lst(t_dirs **head);
+void	ls_free_all(char **files, char **dirs, char ***path, t_option **opt);
 
 #endif

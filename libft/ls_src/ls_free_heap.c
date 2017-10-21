@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/19 18:01:49 by elopez            #+#    #+#             */
-/*   Updated: 2017/10/19 18:01:56 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/20 09:48:40 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,14 @@ void	ls_free_lst(t_dirs **head)
 		ft_memdel((void**)&tmp);
 	}
 	ft_memdel((void**)head);
+}
+
+void	ls_free_all(char **files, char **dirs, char ***path, t_option **opt)
+{
+	ft_strdel(files);
+	ft_strdel(dirs);
+	free_2d(path);
+	ft_memdel((void**)opt);
 }
 
 void	free_2d(char ***arr_2d)
