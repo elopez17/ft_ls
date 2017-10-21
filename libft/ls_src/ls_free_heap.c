@@ -6,7 +6,7 @@
 /*   By: elopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/19 18:01:49 by elopez            #+#    #+#             */
-/*   Updated: 2017/10/20 09:48:40 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/21 10:05:18 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,9 @@ void	free_2d(char ***arr_2d)
 {
 	int i;
 
-	i = 0;
-	while ((*arr_2d)[i])
-		ft_strdel(&(*arr_2d)[i++]);
+	i = -1;
+	while ((*arr_2d)[++i])
+		ft_strdel(&(*arr_2d)[i]);
 	free(*arr_2d);
+	*arr_2d = 0;
 }
