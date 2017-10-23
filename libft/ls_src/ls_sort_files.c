@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/05 17:54:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/19 18:22:27 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/23 12:54:52 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ char		**ls_sort_files(t_dirs *d, char *files, char *d_path, t_option *opt)
 		d->width = slen;
 	if (opt->t == 0)
 	{
-		while (file_arr[i] != NULL && file_arr[i][0] == '.')
+		while (!opt->a && file_arr[i] != NULL && file_arr[i][0] == '.')
 			++i;
 		ls_sort(file_arr, (i > 2) ? 2 : i, end);
 	}
