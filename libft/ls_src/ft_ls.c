@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/24 12:11:21 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 14:15:53 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,19 +74,13 @@ static void		read_dir(DIR *dirp, t_dirs **dir, t_option *opt)
 	while ((entry = readdir(dirp)))
 	{
 		(*dir)->files = ls_get_files((*dir)->files, entry->d_name, opt);
-	//	ft_printf("f=%s\n", entry->d_name);
 		lstat((path = ls_get_dirs((*dir)->path, entry->d_name)), &attr);
 		ft_strdel(&path);
-//		ft_printf("outside %s=%o\n", entry->d_name, attr.st_mode);
 		if ((attr.st_mode & S_IFMT) == S_IFDIR && ft_memcmp(entry->d_name, ".",\
 2) && ft_memcmp(entry->d_name, "..", 3) && (entry->d_name[0] != '.' || opt->a))
 		{
-//			ft_printf("isdir inside if %s\n", entry->d_name);
-			if (new->path)
-			{
-				MEMCHECK(!(new->next = (t_dirs*)ft_memalloc(sizeof(t_dirs))));
+			if (new->path && (new->next = (t_dirs*)malloc(sizeof(t_dirs))))
 				new = new->next;
-			}
 			new->path = ls_get_dirs((*dir)->path, entry->d_name);
 			new->files = ft_strdup("");
 		}
@@ -109,20 +103,16 @@ void			ls_path(t_option *opt, char *files, char *path)
 		IF(opt->R && dir->path != head->path, ft_printf("\n%s:\n", dir->path));
 		if (errno == 0)
 		{
-//			ft_printf("Checking\n");
 			read_dir(dirp, &dir, opt);
 			a_file = ls_sort_files(dir, dir->files, dir->path, opt);
 			ls_print_data(a_file, dir->path, dir->width, opt);
 			free_2d(&a_file);
 			closedir(dirp);
 		}
-		else
-			ft_printf("ls: %s: %s\n", dir->path, strerror(errno));
+		IF(errno != 0, ft_printf("ls: %s: %s\n", dir->path, strerror(errno)));
 		errno = 0;
-//		ft_printf("opt->R=%d\n", opt->R);
 		if (!dir->next || !opt->R)
 			break ;
-//		ft_printf("Checking2\n");
 		dir = dir->next;
 	}
 	ls_free_lst(&head);

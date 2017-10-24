@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 11:21:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/24 12:35:24 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 13:57:49 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,6 @@ void	ls_pathiter(t_option *opt, char *files, char **path)
 			ft_printf(path[1] != 0 || opt->files ? "%s:\n" : "", path[i]);
 		else
 			ft_printf("\n%s:\n", path[i]);
-	ls_path(opt, "", path[opt->r ? i-- : i++]);
+		ls_path(opt, "", path[opt->r ? i-- : i++]);
 	}
 }
