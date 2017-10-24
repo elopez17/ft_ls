@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/08 13:38:37 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/24 13:51:45 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 14:33:58 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,5 +121,5 @@ void		ls_print_data(char **files, char *path, int width, t_option *opt)
 	}
 	g_width1 = 0;
 	g_width2 = 0;
-	IF(((i - xfive) % 5 || opt->R) && !opt->one && !opt->l, ft_putchar('\n'));
+	IF(((i - xfive) % 5 || opt->br) && !opt->one && !opt->l, ft_putchar('\n'));
 }

@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/24 14:15:53 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 14:33:02 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void		get_opt(t_option **opt, char ***argv)
 			else if ((**argv)[i] == 'l')
 				(*opt)->l = 1;
 			else if ((**argv)[i] == 'R')
-				(*opt)->R = 1;
+				(*opt)->br = 1;
 			else if ((**argv)[i] == '1')
 				(*opt)->one = 1;
 			else
@@ -100,7 +100,7 @@ void			ls_path(t_option *opt, char *files, char *path)
 	head = dir;
 	while (*files == '\0' && ((dirp = opendir(dir->path)) || errno != 0))
 	{
-		IF(opt->R && dir->path != head->path, ft_printf("\n%s:\n", dir->path));
+		IF(opt->br && dir->path != head->path, ft_printf("\n%s:\n", dir->path));
 		if (errno == 0)
 		{
 			read_dir(dirp, &dir, opt);
@@ -111,7 +111,7 @@ void			ls_path(t_option *opt, char *files, char *path)
 		}
 		IF(errno != 0, ft_printf("ls: %s: %s\n", dir->path, strerror(errno)));
 		errno = 0;
-		if (!dir->next || !opt->R)
+		if (!dir->next || !opt->br)
 			break ;
 		dir = dir->next;
 	}
