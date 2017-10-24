@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/23 15:16:25 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/23 20:43:55 by eLopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void		read_dir(DIR *dirp, t_dirs **dir, t_option *opt)
 	while ((entry = readdir(dirp)))
 	{
 		(*dir)->files = ls_get_files((*dir)->files, entry->d_name, opt);
-		//ft_printf("f=%s\n", entry->d_name);
+	//	ft_printf("f=%s\n", entry->d_name);
 		path = ft_strmer(ft_strdup((*dir)->path), ft_strjoin("/", entry->d_name));
 		lstat(path, &attr);
 		ft_strdel(&path);
