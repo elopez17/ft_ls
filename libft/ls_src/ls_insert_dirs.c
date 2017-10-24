@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/04 13:24:12 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/24 11:25:43 by elopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 12:09:05 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,9 +102,7 @@ void			ls_insert_dirs(t_dirs *new, t_dirs **dir, unsigned int rev)
 {
 	t_dirs *tmp;
 
-	ft_printf("insertfunc\n");
 	ls_mergesort(&new);
-	ft_printf("after insertfunc\n");
 	tmp = (*dir)->next;
 	if (rev && new->next != NULL)
 		reverse_lst(&new);

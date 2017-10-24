@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/08 13:38:37 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/20 19:44:20 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 13:51:45 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static void	total_size(char **files, char *path, t_option *opt)
 		}
 		ft_strdel(&f_path);
 	}
-	if (!opt->files && (ft_strcmp(files[--i], "..") != 0 || opt->a || i != 1))
+	if (!opt->files && (opt->a || i > 2))
 		ft_printf("total %lld\n", size);
 }
 

@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 11:21:53 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/20 18:29:21 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 12:35:24 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	ls_pathiter(t_option *opt, char *files, char **path)
 	while (i >= 0 && path[i] != 0)
 	{
 		if (i == 0 && !*files)
-			ft_printf(path[1] != 0 ? "%s:\n" : "", path[i]);
+			ft_printf(path[1] != 0 || opt->files ? "%s:\n" : "", path[i]);
 		else
 			ft_printf("\n%s:\n", path[i]);
 	ls_path(opt, "", path[opt->r ? i-- : i++]);
