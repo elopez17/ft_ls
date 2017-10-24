@@ -6,7 +6,7 @@
 /*   By: eLopez <elopez@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/08/03 16:37:19 by eLopez            #+#    #+#             */
-/*   Updated: 2017/10/23 20:43:55 by eLopez           ###   ########.fr       */
+/*   Updated: 2017/10/24 12:02:10 by elopez           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,25 +69,22 @@ static void		read_dir(DIR *dirp, t_dirs **dir, t_option *opt)
 	t_dirs			*new;
 	t_dirs			*tmp;
 
-	if (!(new = (t_dirs*)ft_memalloc(sizeof(t_dirs))))
-		ft_p_exit("malloc");
+	MEMCHECK(!(new = (t_dirs*)ft_memalloc(sizeof(t_dirs))));
 	tmp = new;
 	while ((entry = readdir(dirp)))
 	{
 		(*dir)->files = ls_get_files((*dir)->files, entry->d_name, opt);
 	//	ft_printf("f=%s\n", entry->d_name);
-		path = ft_strmer(ft_strdup((*dir)->path), ft_strjoin("/", entry->d_name));
-		lstat(path, &attr);
+		lstat((path = ls_get_dirs((*dir)->path, entry->d_name)), &attr);
 		ft_strdel(&path);
 //		ft_printf("outside %s=%o\n", entry->d_name, attr.st_mode);
-		if ((attr.st_mode & S_IFMT) == S_IFDIR && ft_memcmp(entry->d_name, ".", 2) && \
-ft_memcmp(entry->d_name, "..", 3) && (entry->d_name[0] != '.' || opt->a))
+		if ((attr.st_mode & S_IFMT) == S_IFDIR && ft_memcmp(entry->d_name, ".",\
+2) && ft_memcmp(entry->d_name, "..", 3) && (entry->d_name[0] != '.' || opt->a))
 		{
 //			ft_printf("isdir inside if %s\n", entry->d_name);
 			if (new->path)
 			{
-				if (!(new->next = (t_dirs*)ft_memalloc(sizeof(t_dirs))))
-					ft_p_exit("malloc");
+				MEMCHECK(!(new->next = (t_dirs*)ft_memalloc(sizeof(t_dirs))));
 				new = new->next;
 			}
 			new->path = ls_get_dirs((*dir)->path, entry->d_name);
